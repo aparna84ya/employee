@@ -1,9 +1,9 @@
-package com.employee.Service;
+package com.employee.service;
 
-import com.employee.Model.Department;
-import com.employee.Model.Employee;
-import com.employee.Repository.DepartmentRepository;
-import com.employee.Repository.EmployeeRepository;
+import com.employee.model.Department;
+import com.employee.model.Employee;
+import com.employee.repository.DepartmentRepository;
+import com.employee.repository.EmployeeRepository;
 import com.employee.dto.DepartmentDTOResponse;
 import com.employee.dto.EmployeeDTORequest;
 import com.employee.dto.EmployeeDTOResponse;

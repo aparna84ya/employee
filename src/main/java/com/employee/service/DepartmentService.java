@@ -1,12 +1,10 @@
-package com.employee.Service;
+package com.employee.service;
 
-import com.employee.Model.Department;
-import com.employee.Model.Employee;
-import com.employee.Repository.DepartmentRepository;
+import com.employee.model.Department;
+import com.employee.repository.DepartmentRepository;
 import com.employee.dto.DepartmentDTORequest;
 import com.employee.dto.DepartmentDTOResponse;
 import com.employee.exception.DepartmentNotFoundException;
-import com.employee.exception.EmployeeNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

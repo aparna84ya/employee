@@ -1,6 +1,6 @@
-package com.employee.Repository;
+package com.employee.repository;
 
-import com.employee.Model.Employee;
+import com.employee.model.Employee;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;

@@ -1,7 +1,7 @@
 package com.employee.controller;
 
 
-import com.employee.Service.DepartmentService;
+import com.employee.service.DepartmentService;
 import com.employee.dto.DepartmentDTORequest;
 import com.employee.dto.DepartmentDTOResponse;
 import com.employee.exception.DepartmentNotFoundException;
