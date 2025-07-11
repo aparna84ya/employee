@@ -23,6 +23,7 @@ public class Employee {
     private String address;
     @CreatedDate
     private LocalDateTime createdDate;
+    @CreatedDate
     private LocalDateTime updatedDate;
     private String createdBy;
 

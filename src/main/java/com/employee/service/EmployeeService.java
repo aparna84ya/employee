@@ -48,8 +48,6 @@ public class EmployeeService {
         employee.setMiddleName(employeeDTORequest.getMiddleName());
         employee.setLastName(employeeDTORequest.getLastName());
         employee.setAddress(employeeDTORequest.getAddress());
-        employee.setCreatedDate(LocalDateTime.now());
-        employee.setUpdatedDate(LocalDateTime.now());
         employee.setCreatedBy(employeeDTORequest.getFirstName());
         employee.setDeptId(employeeDTORequest.getDeptId());
 
