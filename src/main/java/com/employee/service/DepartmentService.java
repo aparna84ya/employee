@@ -6,6 +6,7 @@ import com.employee.dto.DepartmentDTORequest;
 import com.employee.dto.DepartmentDTOResponse;
 import com.employee.exception.DepartmentNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -120,5 +121,9 @@ public class DepartmentService {
     public String deleteDepartment(String deptId) {
         departmentRepository.deleteById(deptId);
         return deptId + " employee deleted.";
+    }
+
+    public ResponseEntity<?> getDeptEmpInfo() {
+
     }
 }

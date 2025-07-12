@@ -3,10 +3,12 @@ package com.employee.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Document(collection = "departments")
 @Data
@@ -18,9 +20,12 @@ public class Department {
     private String deptName;
     private String description;
 
-//    private List<Employee> employees;
-
+    @CreatedDate
     private LocalDateTime createdDate;
+    @CreatedDate
+
     private LocalDateTime updatedDate;
     private String createdBy;
+
+//    private List<String> empId;
 }
