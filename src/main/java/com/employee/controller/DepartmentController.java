@@ -24,7 +24,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/department")
 public class DepartmentController {
-
+    //Inject the Dependency
     @Autowired
     private DepartmentService departmentService;
 
@@ -33,10 +33,14 @@ public class DepartmentController {
     public DepartmentDTOResponse createDepartment(@RequestBody DepartmentDTORequest departmentDTORequest){
         return departmentService.addDepartment(departmentDTORequest);
     }
-
     @GetMapping
     public ResponseEntity<List<DepartmentDTOResponse>> getDepartments() {
         return ResponseEntity.ok(departmentService.findAllDepartments());
+    }
+
+    @GetMapping("/deptEmpInfo")
+    public ResponseEntity<?> getDeptEmpInfo() {
+        return departmentService.getDeptEmpInfo();
     }
 
 
