@@ -11,6 +11,5 @@ public class DepartmentDTOResponse {
     private String deptId;
     private String deptName;
     private String description;
-
     private List<EmployeeDTOResponse> employeeDTOResponses;
 }

@@ -21,9 +21,9 @@ public class Employee {
     private String middleName;
     private String lastName;
     private String address;
-    @CreatedDate
+//    @CreatedDate
     private LocalDateTime createdDate;
-    @CreatedDate
+//    @CreatedDate
     private LocalDateTime updatedDate;
     private String createdBy;
 

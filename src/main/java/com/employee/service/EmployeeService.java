@@ -12,12 +12,12 @@ import com.employee.exception.EmployeeNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 
@@ -146,6 +146,7 @@ public class EmployeeService {
         existingEmployee.setMiddleName(employeeDTORequest.getMiddleName());
         existingEmployee.setLastName(employeeDTORequest.getLastName());
         existingEmployee.setAddress(employeeDTORequest.getAddress());
+        existingEmployee.setDeptId(employeeDTORequest.getDeptId());
         existingEmployee = employeeRepository.save(existingEmployee);
 
         return prepareEmployeeDTOResponse(existingEmployee, optionalDepartment.get());
@@ -184,4 +185,25 @@ public class EmployeeService {
 
         return employeeDTOResponse;
     }
+
+    public String updateEmployeeFirstAndLastName(String empId, String firstName, String lastName) throws EmployeeNotFoundException {
+        Optional<Employee> optionalEmployee = employeeRepository.findById(empId);
+        if (optionalEmployee.isPresent()) {
+            Employee employee = optionalEmployee.get();
+            employee.setFirstName(firstName);
+            employee.setLastName(lastName);
+            employeeRepository.save(employee);
+            return "First & Last name is updated successfully.";
+        }
+        throw new EmployeeNotFoundException(empId + " not found in database.");
+    }
+
+    public List<String> getEmployeesFirstName() {
+        List<Employee> employees = employeeRepository.findAll();
+        return employees.stream()
+                .map(Employee::getFirstName)
+                .collect(Collectors.toList());
+    }
+
+
 }

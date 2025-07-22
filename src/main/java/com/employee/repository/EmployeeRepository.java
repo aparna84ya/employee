@@ -2,10 +2,12 @@ package com.employee.repository;
 
 import com.employee.model.Employee;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
-
-public interface EmployeeRepository extends MongoRepository<Employee , String> {
+@Repository
+public interface EmployeeRepository extends MongoRepository<Employee, String> {
     List<Employee> findByFirstName(String firstName);
     List<Employee> findByAddress(String address);
+    List<Employee> findByDeptId(String deptId);
 }

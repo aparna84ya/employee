@@ -8,6 +8,7 @@ import com.employee.exception.DepartmentNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -23,6 +24,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/department")
+@CrossOrigin
 public class DepartmentController {
     //Inject the Dependency
     @Autowired
@@ -33,16 +35,11 @@ public class DepartmentController {
     public DepartmentDTOResponse createDepartment(@RequestBody DepartmentDTORequest departmentDTORequest){
         return departmentService.addDepartment(departmentDTORequest);
     }
+
     @GetMapping
     public ResponseEntity<List<DepartmentDTOResponse>> getDepartments() {
         return ResponseEntity.ok(departmentService.findAllDepartments());
     }
-
-    @GetMapping("/deptEmpInfo")
-    public ResponseEntity<?> getDeptEmpInfo() {
-        return departmentService.getDeptEmpInfo();
-    }
-
 
     @GetMapping("/{deptId}")
     public ResponseEntity<?> getDepartment(@PathVariable String deptId){
@@ -54,22 +51,17 @@ public class DepartmentController {
         }
     }
 
-    @GetMapping("/departmentName/{deptName}")
-    public List<DepartmentDTOResponse> findDepartmentUsingFirstName(@PathVariable String deptName){
-        return departmentService.getDepartmentByDeptName(deptName);
-    }
-
-    @PutMapping
-    public ResponseEntity<?> updateDepartment(@RequestBody DepartmentDTORequest departmentDTORequest){
+    @PutMapping("/{deptId}")
+    public ResponseEntity<?> updateDepartment(@PathVariable String deptId, @RequestBody DepartmentDTORequest departmentDTORequest){
         try {
-            return ResponseEntity.ok(departmentService.updateDepartment(departmentDTORequest));
+            return ResponseEntity.ok(departmentService.updateDepartment(deptId, departmentDTORequest));
         } catch (DepartmentNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 
     @PatchMapping("/{deptId}/{deptName}")
-    public ResponseEntity<?> updateDepartmentDeptName(@PathVariable String deptId, @PathVariable String deptName)
+    public ResponseEntity<?> updateDepartmentName(@PathVariable String deptId, @PathVariable String deptName)
             throws DepartmentNotFoundException {
         try{
             String responseMessage = departmentService.updateDepartmentName(deptId, deptName);
@@ -84,4 +76,16 @@ public class DepartmentController {
     public String deleteDepartment(@PathVariable String deptId){
         return departmentService.deleteDepartment(deptId);
     }
+
+    @GetMapping("/departmentName/{deptName}")
+    public List<DepartmentDTOResponse> getDepartmentUsingDeptName(@PathVariable String deptName){
+        return departmentService.getDepartmentByDeptName(deptName);
+    }
+
+    @GetMapping("/deptEmpInfo")
+    public List<DepartmentDTOResponse> getDeptEmpInfo() {
+        return departmentService.getDeptEmpInfo();
+    }
 }
+
+

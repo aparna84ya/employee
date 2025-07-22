@@ -1,5 +1,6 @@
 package com.employee.controller;
 
+import com.employee.dto.EmployeeDTOResponse;
 import com.employee.service.EmployeeService;
 import com.employee.dto.EmployeeDTORequest;
 import com.employee.exception.DepartmentNotFoundException;
@@ -7,6 +8,7 @@ import com.employee.exception.EmployeeNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -17,8 +19,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
 @RequestMapping("/employee")
+@CrossOrigin
 public class EmployeeController {
 
     @Autowired
@@ -27,12 +33,12 @@ public class EmployeeController {
     @PostMapping
     public ResponseEntity<?> createEmployee(@RequestBody EmployeeDTORequest employeeDTORequest) {
         try {
+            EmployeeDTOResponse employeeDTOResponse = employeeService.addEmployee(employeeDTORequest);
             return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(employeeService.addEmployee(employeeDTORequest));
+                    .body(employeeDTOResponse);
         } catch (DepartmentNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
-
     }
 
     @GetMapping
@@ -45,7 +51,6 @@ public class EmployeeController {
         }
     }
 
-
     @GetMapping("/{empId}")
     public ResponseEntity<?> getEmployee(@PathVariable String empId){
         try {
@@ -57,7 +62,7 @@ public class EmployeeController {
     }
 
     @GetMapping("/firstName/{firstName}")
-    public ResponseEntity<?> findEmployeeUsingFirstName(@PathVariable String firstName){
+    public ResponseEntity<?> getEmployeeByFirstName(@PathVariable String firstName){
         try {
             return ResponseEntity.status(HttpStatus.OK)
                     .body(employeeService.getEmployeeByFirstName(firstName));
@@ -67,7 +72,7 @@ public class EmployeeController {
     }
 
     @GetMapping("/address/{address}")
-    public ResponseEntity<?> findEmployeeUsingAddress(@PathVariable String address){
+    public ResponseEntity<?> getEmployeeByAddress(@PathVariable String address){
         try {
             return ResponseEntity.status(HttpStatus.OK)
                     .body(employeeService.getEmployeeByAddress(address));
@@ -86,8 +91,9 @@ public class EmployeeController {
         }
     }
 
-    @PatchMapping("/{empId}/{firstName}")
-    public ResponseEntity<String> updateEmployeeFirstName(@PathVariable String empId, @PathVariable String firstName) throws EmployeeNotFoundException {
+    @PatchMapping("/firstName/{empId}/{firstName}")
+    public ResponseEntity<String> updateEmployeeFirstName
+            (@PathVariable String empId, @PathVariable String firstName) throws EmployeeNotFoundException {
         try{
             String responseMessage = employeeService.updateEmployeeFirstName(empId,firstName);
             return ResponseEntity.ok(responseMessage);
@@ -96,9 +102,29 @@ public class EmployeeController {
                     .body(e.getMessage());
         }
     }
+    @PatchMapping("/firstAndLastName/{empId}/{firstName}/{lastName}")
+    public ResponseEntity<?> updateEmployeeFirstAndLastName(@PathVariable String empId,
+                                                         @PathVariable String firstName,
+                                                         @PathVariable String lastName) throws EmployeeNotFoundException{
+        try {
+            String responseMessage = employeeService.updateEmployeeFirstAndLastName(empId, firstName, lastName);
+            return ResponseEntity.ok(responseMessage);
+        } catch (EmployeeNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(e.getMessage());
+        }
+
+    }
 
     @DeleteMapping("/{empId}")
     public String deleteEmployee(@PathVariable String empId){
         return employeeService.deleteEmployee(empId);
+    }
+
+
+    @GetMapping("/employees/firstName")
+    public ResponseEntity<List<String>> getEmployeesFirstName(){
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(employeeService.getEmployeesFirstName());
     }
 }
