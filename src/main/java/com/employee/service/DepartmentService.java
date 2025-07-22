@@ -1,12 +1,14 @@
 package com.employee.service;
 
+import com.employee.dto.EmployeeDTOResponse;
 import com.employee.model.Department;
+import com.employee.model.Employee;
 import com.employee.repository.DepartmentRepository;
 import com.employee.dto.DepartmentDTORequest;
 import com.employee.dto.DepartmentDTOResponse;
 import com.employee.exception.DepartmentNotFoundException;
+import com.employee.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -20,6 +22,9 @@ public class DepartmentService {
 
     @Autowired
     private DepartmentRepository departmentRepository;
+
+    @Autowired
+    private EmployeeRepository employeeRepository;
 
     public DepartmentDTOResponse addDepartment(DepartmentDTORequest departmentDTORequest) {
         Department department = new Department();
@@ -88,8 +93,8 @@ public class DepartmentService {
         return departmentDTOResponses;
     }
 
-    public DepartmentDTOResponse updateDepartment(DepartmentDTORequest departmentDTORequest) throws DepartmentNotFoundException {
-        Optional<Department> optionalDepartment = departmentRepository.findById(departmentDTORequest.getDeptId());
+    public DepartmentDTOResponse updateDepartment(String deptId, DepartmentDTORequest departmentDTORequest) throws DepartmentNotFoundException {
+        Optional<Department> optionalDepartment = departmentRepository.findById(deptId);
 
         if(optionalDepartment.isPresent()) {
             Department department = optionalDepartment.get();
@@ -104,7 +109,7 @@ public class DepartmentService {
 
             return departmentDTOResponse;
         }
-        throw new DepartmentNotFoundException(departmentDTORequest.getDeptId() + " is not found in database.");
+        throw new DepartmentNotFoundException(deptId + " is not found in database.");
     }
 
     public String updateDepartmentName(String deptId, String deptName) throws DepartmentNotFoundException {
@@ -123,7 +128,33 @@ public class DepartmentService {
         return deptId + " employee deleted.";
     }
 
-    public ResponseEntity<?> getDeptEmpInfo() {
+    public List<DepartmentDTOResponse> getDeptEmpInfo() {
+        List<Department> departments = departmentRepository.findAll();
+        List<DepartmentDTOResponse> departmentDTOResponses = new ArrayList<>();
 
+        for(Department department : departments) {
+
+            DepartmentDTOResponse departmentDTOResponse = new DepartmentDTOResponse();
+            departmentDTOResponse.setDeptId(department.getDeptId());
+            departmentDTOResponse.setDeptName(department.getDeptName());
+            departmentDTOResponse.setDescription(department.getDescription());
+
+            List<Employee> employees = employeeRepository.findByDeptId(department.getDeptId());
+            List<EmployeeDTOResponse> employeeDTOResponses = new ArrayList<>();
+
+            for (Employee employee : employees) {
+                EmployeeDTOResponse employeeDTOResponse = new EmployeeDTOResponse();
+                employeeDTOResponse.setEmpId(employee.getEmpId());
+                employeeDTOResponse.setFirstName(employee.getFirstName());
+                employeeDTOResponse.setMiddleName(employee.getMiddleName());
+                employeeDTOResponse.setLastName(employee.getLastName());
+                employeeDTOResponse.setAddress(employee.getAddress());
+
+                employeeDTOResponses.add(employeeDTOResponse);
+            }
+            departmentDTOResponse.setEmployeeDTOResponses(employeeDTOResponses);
+            departmentDTOResponses.add(departmentDTOResponse);
+        }
+        return departmentDTOResponses;
     }
 }

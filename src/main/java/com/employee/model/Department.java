@@ -20,10 +20,10 @@ public class Department {
     private String deptName;
     private String description;
 
-    @CreatedDate
+//    @CreatedDate
     private LocalDateTime createdDate;
-    @CreatedDate
 
+//    @CreatedDate
     private LocalDateTime updatedDate;
     private String createdBy;
 
