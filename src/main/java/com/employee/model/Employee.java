@@ -21,6 +21,7 @@ public class Employee {
     private String middleName;
     private String lastName;
     private String address;
+    private String email;
 //    @CreatedDate
     private LocalDateTime createdDate;
 //    @CreatedDate

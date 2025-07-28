@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -45,7 +44,7 @@ public class EmployeeController {
     public ResponseEntity<?> getEmployees() {
         try {
             return ResponseEntity.status(HttpStatus.OK)
-                    .body(employeeService.findAllEmployees());
+                    .body(employeeService.GetAllEmployees());
         } catch (DepartmentNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
@@ -67,6 +66,17 @@ public class EmployeeController {
             return ResponseEntity.status(HttpStatus.OK)
                     .body(employeeService.getEmployeeByFirstName(firstName));
         } catch (DepartmentNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/email")
+    public ResponseEntity<?> getEmployeeByEmail(@PathVariable String email){
+        try{
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(employeeService.getEmployeeByEmail(email));
+        }
+        catch (EmployeeNotFoundException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
@@ -102,6 +112,7 @@ public class EmployeeController {
                     .body(e.getMessage());
         }
     }
+
     @PatchMapping("/firstAndLastName/{empId}/{firstName}/{lastName}")
     public ResponseEntity<?> updateEmployeeFirstAndLastName(@PathVariable String empId,
                                                          @PathVariable String firstName,
@@ -120,7 +131,6 @@ public class EmployeeController {
     public String deleteEmployee(@PathVariable String empId){
         return employeeService.deleteEmployee(empId);
     }
-
 
     @GetMapping("/employees/firstName")
     public ResponseEntity<List<String>> getEmployeesFirstName(){

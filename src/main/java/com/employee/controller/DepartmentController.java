@@ -1,6 +1,7 @@
 package com.employee.controller;
 
 
+import com.employee.exception.DepartmentAlreadyExistException;
 import com.employee.service.DepartmentService;
 import com.employee.dto.DepartmentDTORequest;
 import com.employee.dto.DepartmentDTOResponse;
@@ -32,10 +33,17 @@ public class DepartmentController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public DepartmentDTOResponse createDepartment(@RequestBody DepartmentDTORequest departmentDTORequest){
-        return departmentService.addDepartment(departmentDTORequest);
+    public ResponseEntity<?> createDepartment(@RequestBody DepartmentDTORequest departmentDTORequest){
+        try {
+            DepartmentDTOResponse departmentDTOResponse = departmentService.addDepartment(departmentDTORequest);
+            return ResponseEntity.ok(departmentDTOResponse);
+        } catch (DepartmentAlreadyExistException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(e.getMessage());
+        }
     }
 
+    //this getting all employees
     @GetMapping
     public ResponseEntity<List<DepartmentDTOResponse>> getDepartments() {
         return ResponseEntity.ok(departmentService.findAllDepartments());

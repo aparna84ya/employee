@@ -12,5 +12,6 @@ public class EmployeeDTORequest {
     private String middleName;
     private String lastName;
     private String address;
+    private String email;
     private String deptId;
 }
