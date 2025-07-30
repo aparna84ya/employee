@@ -1,12 +1,15 @@
 package com.employee.controller;
 
 
+import com.employee.dto.DepartmentDTOPageResponse;
 import com.employee.exception.DepartmentAlreadyExistException;
+import com.employee.model.Department;
 import com.employee.service.DepartmentService;
 import com.employee.dto.DepartmentDTORequest;
 import com.employee.dto.DepartmentDTOResponse;
 import com.employee.exception.DepartmentNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -90,10 +94,28 @@ public class DepartmentController {
         return departmentService.getDepartmentByDeptName(deptName);
     }
 
+    @GetMapping("/departmentByPage/{page}/{size}")
+    public DepartmentDTOPageResponse getDepartmentByPage(
+            @PathVariable int page,
+            @PathVariable int size) {
+        return departmentService.getDepartmentByPage(page, size);
+    }
+
+    @GetMapping("/departmentByPage/{page}/{size}/{property}")
+    public DepartmentDTOPageResponse getDepartmentByPageAndAscByProperty(
+            @PathVariable int page,
+            @PathVariable int size,
+            @PathVariable String property) {
+        return departmentService.getDepartmentByPageAndAscByProperty(page, size, property);
+    }
+
+
     @GetMapping("/deptEmpInfo")
     public List<DepartmentDTOResponse> getDeptEmpInfo() {
         return departmentService.getDeptEmpInfo();
     }
+
+
 }
 
 
