@@ -1,5 +1,6 @@
 package com.employee.service.impl;
 
+import com.employee.dto.EmployeeDTOPageResponse;
 import com.employee.model.Department;
 import com.employee.model.Employee;
 import com.employee.repository.DepartmentRepository;
@@ -11,9 +12,12 @@ import com.employee.exception.DepartmentNotFoundException;
 import com.employee.exception.EmployeeNotFoundException;
 import com.employee.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -220,4 +224,60 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
         throw new EmployeeNotFoundException(email + " not found in database");
     }
+
+    @Override
+    public EmployeeDTOPageResponse getEmployeeByPageAndAscByProperty(int page, int size, String property) {
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(property).ascending());
+        Page<Employee> employees = employeeRepository.findAll(pageRequest);
+        List<EmployeeDTOResponse> employeeDTOResponses = new ArrayList<>();
+        EmployeeDTOPageResponse employeeDTOPageResponse = new EmployeeDTOPageResponse();
+
+        for (Employee employee : employees) {
+
+            EmployeeDTOResponse employeeDTOResponse = new EmployeeDTOResponse();
+            employeeDTOResponse.setEmpId(employee.getEmpId());
+            employeeDTOResponse.setFirstName(employee.getFirstName());
+            employeeDTOResponse.setMiddleName(employee.getMiddleName());
+
+            employeeDTOResponses.add(employeeDTOResponse);
+        }
+        employeeDTOPageResponse.setEmployeeDTOResponse(employeeDTOResponses);
+        employeeDTOPageResponse.setPageNumber(employees.getNumber());
+        employeeDTOPageResponse.setPageSize(employees.getSize());
+        employeeDTOPageResponse.setTotalElement(employees.getTotalElements());
+
+        return employeeDTOPageResponse;
+
+    }
+
+    @Override
+    public EmployeeDTOPageResponse getEmployeeByPage(int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<Employee> employees = employeeRepository.findAll(pageRequest);
+        List<EmployeeDTOResponse> employeeDTOResponses = new ArrayList<>();
+        EmployeeDTOPageResponse employeeDTOPageResponse = new EmployeeDTOPageResponse();
+
+        for (Employee employee : employees) {
+
+            EmployeeDTOResponse employeeDTOResponse = new EmployeeDTOResponse();
+            employeeDTOResponse.setEmpId(employee.getEmpId());
+            employeeDTOResponse.setFirstName(employee.getFirstName());
+            employeeDTOResponse.setMiddleName(employee.getMiddleName());
+            employeeDTOResponse.setLastName(employee.getLastName());
+            employeeDTOResponse.setEmail(employee.getEmail());
+            employeeDTOResponse.setAddress(employee.getAddress());
+
+            employeeDTOResponses.add(employeeDTOResponse);
+        }
+
+        employeeDTOPageResponse.setEmployeeDTOResponse(employeeDTOResponses);
+        employeeDTOPageResponse.setPageNumber(employees.getNumber());
+        employeeDTOPageResponse.setPageSize(employees.getSize());
+        employeeDTOPageResponse.setTotalElement(employees.getTotalElements());
+
+        return employeeDTOPageResponse;
+
+
+    }
 }
+

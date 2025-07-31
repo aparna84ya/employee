@@ -1,9 +1,12 @@
 package com.employee.service;
 
+import com.employee.dto.EmployeeDTOPageResponse;
 import com.employee.dto.EmployeeDTORequest;
 import com.employee.dto.EmployeeDTOResponse;
 import com.employee.exception.DepartmentNotFoundException;
 import com.employee.exception.EmployeeNotFoundException;
+import com.employee.model.Employee;
+
 import java.util.List;
 
 public interface EmployeeService {
@@ -30,4 +33,9 @@ public interface EmployeeService {
     List<String> getEmployeesFirstName();
 
     String getEmployeeByEmail(String empId) throws EmployeeNotFoundException;
+
+    EmployeeDTOPageResponse getEmployeeByPageAndAscByProperty(int page, int size, String property);
+
+    EmployeeDTOPageResponse getEmployeeByPage(int page, int size);
+
 }

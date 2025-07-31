@@ -1,5 +1,7 @@
 package com.employee.controller;
 
+import com.employee.dto.DepartmentDTOPageResponse;
+import com.employee.dto.EmployeeDTOPageResponse;
 import com.employee.dto.EmployeeDTOResponse;
 import com.employee.service.EmployeeService;
 import com.employee.dto.EmployeeDTORequest;
@@ -125,6 +127,21 @@ public class EmployeeController {
                     .body(e.getMessage());
         }
 
+    }
+
+    @GetMapping("/employeeByPage/{page}/{size}")
+    public EmployeeDTOPageResponse getEmployeeByPage(
+            @PathVariable int page,
+            @PathVariable int size) {
+        return employeeService.getEmployeeByPage(page, size);
+    }
+
+    @GetMapping("/employeeByPage/{page}/{size}/{property}")
+    public EmployeeDTOPageResponse getEmployeeByPageAndAscByProperty(
+            @PathVariable int page,
+            @PathVariable int size,
+            @PathVariable String property) {
+        return employeeService.getEmployeeByPageAndAscByProperty(page, size, property);
     }
 
     @DeleteMapping("/{empId}")
