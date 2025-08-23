@@ -1,11 +1,11 @@
 package com.employee.service;
 
-import com.employee.dto.DepartmentDTORequest;
-import com.employee.dto.DepartmentDTOResponse;
-import com.employee.exception.DepartmentAlreadyExistException;
-import com.employee.model.Department;
-import com.employee.repository.DepartmentRepository;
-import com.employee.service.impl.DepartmentServiceImpl;
+import com.employee.dto.department.DepartmentDTORequest;
+import com.employee.dto.department.DepartmentDTOResponse;
+import com.employee.exception.department.DepartmentAlreadyExistException;
+import com.employee.model.department.Department;
+import com.employee.repository.department.DepartmentRepository;
+import com.employee.service.department.impl.DepartmentServiceImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,7 +32,7 @@ public class DepartmentServiceTest {
     private DepartmentRepository departmentRepository;
 
     @Test
-     void testAddDepartment() throws DepartmentAlreadyExistException {
+     void AddDepartment_Success() throws DepartmentAlreadyExistException {
         Department department = new Department();
         String uuid = UUID.randomUUID().toString().split("-")[0];
         department.setDeptId(uuid);
@@ -55,7 +55,7 @@ public class DepartmentServiceTest {
     }
 
     @Test
-    void testDepartmentAlreadyExistException() {
+    void AddDepartment_Exist_Error() {
         DepartmentDTORequest departmentDTORequest = new DepartmentDTORequest();
         departmentDTORequest.setDeptName("Economics");
 
@@ -73,7 +73,7 @@ public class DepartmentServiceTest {
     }
 
     @Test
-    void testAddDepartmentNUllPointerException() {
+    void AddDepartment_Null_Pointer_Exception() {
         DepartmentDTORequest departmentDTORequest = new DepartmentDTORequest();
         departmentDTORequest.setDeptName("Economics");
 

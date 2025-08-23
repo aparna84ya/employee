@@ -1,0 +1,270 @@
+package com.employee.service.employee.impl;
+
+import com.employee.util.PasswordUtil;
+import com.employee.model.department.Department;
+import com.employee.model.employee.Employee;
+import com.employee.repository.department.DepartmentRepository;
+import com.employee.repository.employee.EmployeeRepository;
+import com.employee.dto.department.DepartmentDTOResponse;
+import com.employee.dto.employee.EmployeeDTORequest;
+import com.employee.dto.employee.EmployeeDTOResponse;
+import com.employee.exception.department.DepartmentNotFoundException;
+import com.employee.exception.employee.EmployeeNotFoundException;
+import com.employee.service.employee.EmployeeService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+@Service
+public class EmployeeServiceImpl implements EmployeeService {
+
+    @Autowired
+    private EmployeeRepository employeeRepository;
+
+    @Autowired
+    private DepartmentRepository departmentRepository;
+
+    public EmployeeDTOResponse addEmployee(EmployeeDTORequest employeeDTORequest) throws DepartmentNotFoundException {
+
+        if (Objects.isNull(employeeDTORequest.getDeptId()) || employeeDTORequest.getDeptId().isEmpty()) {
+            throw new DepartmentNotFoundException("Dept id is empty.");
+        }
+
+        Optional<Department> optionalDepartment = departmentRepository.findById(employeeDTORequest.getDeptId());
+        if (!optionalDepartment.isPresent()) {
+            throw new DepartmentNotFoundException(employeeDTORequest.getDeptId() + " is not exist in database.");
+        }
+
+        Employee employee = new Employee();
+
+        employee.setEmpId(UUID.randomUUID().toString().split("-")[0]);
+        employee.setFirstName(employeeDTORequest.getFirstName());
+        employee.setMiddleName(employeeDTORequest.getMiddleName());
+        employee.setLastName(employeeDTORequest.getLastName());
+        employee.setAddress(employeeDTORequest.getAddress());
+        employee.setEmail(employeeDTORequest.getEmail());
+        employee.setCreatedBy(SecurityContextHolder.getContext().getAuthentication().getName());
+        employee.setUpdatedBy(SecurityContextHolder.getContext().getAuthentication().getName());
+        employee.setDeptId(employeeDTORequest.getDeptId());
+        String password = PasswordUtil.getPasswordHash(employeeDTORequest.getPassword());
+        employee.setPassword(password);
+        employee.setEnabled(true);
+
+        employee = employeeRepository.save(employee);
+
+        return prepareEmployeeDTOResponse(employee, optionalDepartment.get());
+    }
+
+    public List<EmployeeDTOResponse> GetAllEmployees() throws DepartmentNotFoundException {
+        List<Employee> employees = employeeRepository.findAll();
+
+        List<EmployeeDTOResponse> employeeDTOResponses = new ArrayList<>();
+
+        for (Employee employee : employees) {
+            Optional<Department> optionalDepartment = departmentRepository.findById(employee.getDeptId());
+            if (!optionalDepartment.isPresent()) {
+                throw new DepartmentNotFoundException(employee.getDeptId() + " is not exist in database.");
+            }
+            EmployeeDTOResponse employeeDTOResponse = prepareEmployeeDTOResponse(employee, optionalDepartment.get());
+
+            employeeDTOResponses.add(employeeDTOResponse);
+        }
+
+        return employeeDTOResponses;
+    }
+
+    public EmployeeDTOResponse getEmployeeByEmpId(String empId) throws EmployeeNotFoundException, DepartmentNotFoundException {
+
+        Optional<Employee> optionalEmployee = employeeRepository.findById(empId);
+        if (!optionalEmployee.isPresent()) {
+            throw new EmployeeNotFoundException("Employee " + empId + " not found in database.");
+        }
+        Employee employee = optionalEmployee.get();
+
+        Optional<Department> optionalDepartment = departmentRepository.findById(employee.getDeptId());
+        if (!optionalDepartment.isPresent()) {
+            throw new DepartmentNotFoundException("Department " + employee.getDeptId() + " is not exist in database.");
+        }
+        return prepareEmployeeDTOResponse(employee, optionalDepartment.get());
+    }
+
+    public List<EmployeeDTOResponse> getEmployeeByFirstName(String firstName) throws DepartmentNotFoundException {
+
+        List<Employee> employees = employeeRepository.findByFirstName(firstName);
+
+        List<EmployeeDTOResponse> employeeDTOResponses = new ArrayList<>();
+
+        for (Employee employee : employees) {
+            Optional<Department> optionalDepartment = departmentRepository.findById(employee.getDeptId());
+            if (!optionalDepartment.isPresent()) {
+                throw new DepartmentNotFoundException(employee.getDeptId() + " is not exist in database.");
+            }
+            EmployeeDTOResponse employeeDTOResponse = prepareEmployeeDTOResponse(employee, optionalDepartment.get());
+
+            employeeDTOResponses.add(employeeDTOResponse);
+        }
+
+        return employeeDTOResponses;
+    }
+
+    public List<EmployeeDTOResponse> getEmployeeByAddress(String address) throws DepartmentNotFoundException {
+        List<Employee> employees = employeeRepository.findByAddress(address);
+
+        List<EmployeeDTOResponse> employeeDTOResponses = new ArrayList<>();
+
+        for (Employee employee : employees) {
+            Optional<Department> optionalDepartment = departmentRepository.findById(employee.getDeptId());
+            if (!optionalDepartment.isPresent()) {
+                throw new DepartmentNotFoundException(employee.getDeptId() + " is not exist in database.");
+            }
+            EmployeeDTOResponse employeeDTOResponse = prepareEmployeeDTOResponse(employee, optionalDepartment.get());
+
+            employeeDTOResponses.add(employeeDTOResponse);
+        }
+
+        return employeeDTOResponses;
+    }
+
+
+    public EmployeeDTOResponse updateEmployee(String empId, EmployeeDTORequest employeeDTORequest)
+            throws EmployeeNotFoundException, DepartmentNotFoundException {
+
+        Optional<Employee> optionalEmployee = employeeRepository.findById(empId);
+        if (!optionalEmployee.isPresent()) {
+            throw new EmployeeNotFoundException("Employee " + empId + " not found in database.");
+        }
+
+        Optional<Department> optionalDepartment = departmentRepository.findById(employeeDTORequest.getDeptId());
+        if (!optionalDepartment.isPresent()) {
+            throw new DepartmentNotFoundException("Department " + employeeDTORequest.getDeptId() + " is not exist in database.");
+        }
+
+        Employee existingEmployee = optionalEmployee.get();
+        existingEmployee.setFirstName(employeeDTORequest.getFirstName());
+        existingEmployee.setMiddleName(employeeDTORequest.getMiddleName());
+        existingEmployee.setLastName(employeeDTORequest.getLastName());
+        existingEmployee.setAddress(employeeDTORequest.getAddress());
+        existingEmployee.setEmail(employeeDTORequest.getEmail());
+        existingEmployee.setDeptId(employeeDTORequest.getDeptId());
+        existingEmployee.setUpdatedBy(SecurityContextHolder.getContext().getAuthentication().getName());
+        existingEmployee = employeeRepository.save(existingEmployee);
+
+        return prepareEmployeeDTOResponse(existingEmployee, optionalDepartment.get());
+    }
+
+    public String updateEmployeeFirstName(String empId, String firstName) throws EmployeeNotFoundException {
+        Optional<Employee> optionalEmployee = employeeRepository.findById(empId);
+        if (optionalEmployee.isPresent()) {
+            Employee employee = optionalEmployee.get();
+            employee.setFirstName(firstName);
+            employee.setUpdatedBy(SecurityContextHolder.getContext().getAuthentication().getName());
+            employeeRepository.save(employee);
+            return "First name is updated successfully.";
+        }
+        throw new EmployeeNotFoundException(empId + " not found in database.");
+    }
+
+    public String deleteEmployee(String empId) {
+        employeeRepository.deleteById(empId);
+        return empId + " employee deleted.";
+    }
+
+    private EmployeeDTOResponse prepareEmployeeDTOResponse(Employee employee, Department department) {
+        EmployeeDTOResponse employeeDTOResponse = new EmployeeDTOResponse();
+        employeeDTOResponse.setEmpId(employee.getEmpId());
+        employeeDTOResponse.setFirstName(employee.getFirstName());
+        employeeDTOResponse.setMiddleName(employee.getMiddleName());
+        employeeDTOResponse.setLastName(employee.getLastName());
+        employeeDTOResponse.setAddress(employee.getAddress());
+        employeeDTOResponse.setEmail(employee.getEmail());
+
+        DepartmentDTOResponse departmentDTOResponse = new DepartmentDTOResponse();
+        departmentDTOResponse.setDeptId(department.getDeptId());
+        departmentDTOResponse.setDeptName(department.getDeptName());
+        departmentDTOResponse.setDescription(department.getDescription());
+
+//        employeeDTOResponse.setDepartmentDTOResponse(departmentDTOResponse);
+
+        return employeeDTOResponse;
+    }
+
+    public String updateEmployeeFirstAndLastName(String empId, String firstName, String lastName) throws EmployeeNotFoundException {
+        Optional<Employee> optionalEmployee = employeeRepository.findById(empId);
+        if (optionalEmployee.isPresent()) {
+            Employee employee = optionalEmployee.get();
+            employee.setFirstName(firstName);
+            employee.setLastName(lastName);
+            employee.setUpdatedBy(SecurityContextHolder.getContext().getAuthentication().getName());
+            employeeRepository.save(employee);
+            return "First & Last name is updated successfully.";
+        }
+        throw new EmployeeNotFoundException(empId + " not found in database.");
+    }
+
+    public List<String> getEmployeesFirstName() {
+        List<Employee> employees = employeeRepository.findAll();
+        return employees.stream()
+                .map(Employee::getFirstName)
+                .collect(Collectors.toList());
+    }
+
+
+    public EmployeeDTOResponse getEmployeeByEmail(String email) throws DepartmentNotFoundException, EmployeeNotFoundException {
+        Optional<Employee> optionalEmployee = employeeRepository.findByEmail(email);
+        if (optionalEmployee.isPresent()) {
+            Optional<Department> optionalDepartment = departmentRepository.findById(optionalEmployee.get().getDeptId());
+            if (!optionalDepartment.isPresent()) {
+                throw new DepartmentNotFoundException(optionalEmployee.get().getDeptId() + " is not exist in database.");
+            }
+            return prepareEmployeeDTOResponse(optionalEmployee.get(), optionalDepartment.get());
+        }
+        throw new EmployeeNotFoundException(email + " not found in database");
+    }
+
+    @Override
+    public Page<EmployeeDTOResponse> getEmployeeByPage(int pageNumber, int pageSize, String sortFieldName, String sortDirection)
+            throws DepartmentNotFoundException {
+        Sort.Direction direction = sortDirection.equalsIgnoreCase("ASC") ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Pageable pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by(direction, sortFieldName));
+
+        return employeeRepository.findAll(pageRequest).map(this::convertToDTO);
+    }
+
+    private EmployeeDTOResponse convertToDTO(Employee employee) throws DepartmentNotFoundException {
+
+        Optional<Department> optionalDepartment = departmentRepository.findById(employee.getDeptId());
+        if (!optionalDepartment.isPresent()) {
+            throw new DepartmentNotFoundException("Department " + employee.getDeptId() + " is not exist in database.");
+        }
+
+        DepartmentDTOResponse departmentDTO = new DepartmentDTOResponse();
+        Department department = optionalDepartment.get();
+        departmentDTO.setDeptId(department.getDeptId());
+        departmentDTO.setDeptName(department.getDeptName());
+        departmentDTO.setDeptName(department.getDescription());
+
+        EmployeeDTOResponse dto = new EmployeeDTOResponse();
+        dto.setEmpId(employee.getEmpId());
+        dto.setFirstName(employee.getFirstName());
+        dto.setMiddleName(employee.getMiddleName());
+        dto.setLastName(employee.getLastName());
+        dto.setEmail(employee.getEmail());
+        dto.setAddress(employee.getAddress());
+        dto.setDepartmentDTOResponse(departmentDTO);
+
+        return dto;
+    }
+}
+
