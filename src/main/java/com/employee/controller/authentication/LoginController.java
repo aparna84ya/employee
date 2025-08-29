@@ -25,25 +25,26 @@ public class LoginController {
     @Autowired
     private AuthenticationService authenticationService;
 
-    @Value("${jwt.header}")//HTTP Header key
+    @Value("${jwt.header}")
     private String tokenHeader;
 
     @Autowired
-    private AuthenticationManager authenticationManager;//Authenticate user credential
+    private AuthenticationManager authenticationManager;
 
     @Autowired
-    private JwtTokenUtil jwtTokenUtil;//handles generating and validating JWT Tokens.
+    private JwtTokenUtil jwtTokenUtil;
 
     @PostMapping(value = "/api/login")
     public ResponseEntity<AuthenticationDTOResponse> login(@RequestBody EmployeeLoginDTO employeeLoginDTO,
                                                            HttpServletRequest request,
                                                            HttpServletResponse response) {
-        try {
+//        try {
             AuthenticationDTOResponse authenticationDTOResponse = authenticationService.login(employeeLoginDTO, request, response);
             return new ResponseEntity<AuthenticationDTOResponse>(authenticationDTOResponse, HttpStatus.OK);
-        } catch (Exception e) {
-            throw new UnauthorizedException(e.getMessage());//return a 401 Unauthorized response
-        }
+//        } catch (Exception e) {
+//
+//            throw new UnauthorizedException(e.getMessage());
+//        }
     }
 }
 

@@ -52,7 +52,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         response.setHeader("Token", token);//Adds the generated JWT token to the response header.
 
         AuthenticationDTOResponse authenticationDTOResponse = new AuthenticationDTOResponse();
-        authenticationDTOResponse.setEmployeeDTOResponse(convertToDTO(employeeDetails.getEmployee()));
+        authenticationDTOResponse.setEmployeeDTOResponse(convertToDTO((Employee) employeeDetails.getEmployee()));
         authenticationDTOResponse.setToken(token);
 
         return authenticationDTOResponse;

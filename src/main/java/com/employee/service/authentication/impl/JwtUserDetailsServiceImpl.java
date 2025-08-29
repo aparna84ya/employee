@@ -32,15 +32,4 @@ public class JwtUserDetailsServiceImpl implements UserDetailsService {
 
     }
 
-//    public EmployeeDTOResponse getEmployeeByEmail(String email) throws DepartmentNotFoundException, EmployeeNotFoundException {
-//        Optional<Employee> optionalEmployee = employeeRepository.findByEmail(email);
-//        if (optionalEmployee.isPresent()) {
-//            Optional<Department> optionalDepartment = employeeRepository.findByEmail(optionalEmployee.get().getDeptId());
-//            if (!optionalDepartment.isPresent()) {
-//                throw new DepartmentNotFoundException(optionalEmployee.get().getDeptId() + " is not exist in database.");
-//            }
-//            return prepareEmployeeDTOResponse(optionalEmployee.get(), optionalDepartment.get());
-//        }
-//        throw new EmployeeNotFoundException(email + " not found in database");
-//    }
 }

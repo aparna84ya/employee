@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-//helps in caching or distributed systems (e.g., storing token-related utilities in sessions or caches)
 public class JwtTokenUtil implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -50,10 +49,10 @@ public class JwtTokenUtil implements Serializable {
     }
 
     public boolean validateToken(String token, UserDetails userDetails) {
-        JwtEmployee user = (JwtEmployee) userDetails;
+        JwtEmployee jwtEmployee = (JwtEmployee) userDetails;
         final String username = getUsernameFromToken(token);
 
-        return (username.equals(user.getUsername()) && !isTokenExpired(token));
+        return (username.equals(jwtEmployee.getUsername()) && !isTokenExpired(token));
     }
 
     private boolean isTokenExpired(String token) {
@@ -92,3 +91,43 @@ public class JwtTokenUtil implements Serializable {
     }
 
 }
+
+//@Component
+//public class JwtTokenUtil {
+//
+//    private final String secret = "AparnaSecretKey"; // from properties in real app
+//    private final long expiration = 86400 * 1000; // 1 day in ms
+//
+//    public String generateToken(String username, Set<Role> roles) {
+//        Map<String, Object> claims = new HashMap<>();
+//        claims.put("roles",claims);
+//
+//        return Jwts.builder()
+//                .setClaims(claims)
+//                .setSubject(username)
+//                .setIssuedAt(new Date(System.currentTimeMillis()))
+//                .setExpiration(new Date(System.currentTimeMillis() + expiration))
+//                .signWith(SignatureAlgorithm.HS512, secret)
+//                .compact();
+//    }
+//
+//    public String extractUsername(String token) {
+//        return getClaims(token).getSubject();
+//    }
+//
+//    public List<String> extractRoles(String token) {
+//        return getClaims(token).get("roles", List.class);
+//    }
+//
+//    public boolean validateToken(String token) {
+//        try {
+//            getClaims(token);
+//            return true;
+//        } catch (Exception e) {
+//            return false;
+//        }
+//    }
+//
+//    private Claims getClaims(String token) {
+//        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
+//    }

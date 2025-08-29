@@ -19,11 +19,12 @@ public class JwtEmployee implements UserDetails {
     private final boolean enabled;
 
     public JwtEmployee(String id, String username, String password, Employee employee,
-                   Collection<? extends GrantedAuthority> authorities, boolean enabled) {
+                       Collection<? extends GrantedAuthority> authorities, boolean enabled) {
         super();
         this.id = id;
         this.username = username;
         this.password = password;
+        //this.accessRoles = role;
         this.employee = employee;
         this.authorities = authorities;
         this.enabled = enabled;
@@ -49,6 +50,9 @@ public class JwtEmployee implements UserDetails {
     public Employee getEmployee() {
         return employee;
     }
+//    public String getRole() {
+//        return role;
+//    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
